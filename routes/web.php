@@ -20,12 +20,25 @@
 
 // -------
 
+use App\Notifications\SubscriptionRenewalFailed;
+
 Route::get('/', function () {
+	// 2) for testing Session
+	// return session('name', 'a default'); //session()->forget('name') to delete 
+
+	// 1) for setting session
+	// session(['name' => 'JohnDoe']);
+
 	// dd(app(Filesystem::class)); // Service Containter examples
     return view('welcome');
+
+    // Testing Notifications
+    $user = App\User::first();
+    $user->notify(new SubscriptionRenewalFailed);
+    return 'Done';
 });
 
-Route::resource('projects', 'ProjectsController');
+Route::resource('projects', 'ProjectsController')/*->middleware('can:update,project')*/;
 
 // Route::get('/projects', 'ProjectsController@index');
 // Route::get('/projects/create', 'ProjectsController@create');
@@ -38,3 +51,6 @@ Route::resource('projects', 'ProjectsController');
 Route::post('/projects/{project}/tasks', 'ProjectTasksController@store');
 
 Route::patch('/tasks/{task}', 'ProjectTasksController@update'); // or just TasksController@update, but 1st is more clear
+Auth::routes();
+
+Route::get('/home', 'HomeController@index')->name('home');
